@@ -1,0 +1,32 @@
+
+SELF := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+
+GUIX_SYSTEM_INSTALL_VERSION ?= 1.0.1
+
+DESTDIR ?= $(SELF)/downloads
+
+ARTIFACT := \
+guix-system-install-$(GUIX_SYSTEM_INSTALL_VERSION).x86_64-linux.iso.xz
+
+TARGET := \
+$(DESTDIR)/$(patsubst %.iso.xz,%.iso,$(ARTIFACT))
+
+export
+
+.PHONY: all clean
+
+all: $(DESTDIR)/guix.iso
+
+$(DESTDIR)/guix.iso: $(TARGET)
+	rm -f $@ && ln -s $< $@
+
+$(TARGET):
+	set -o pipefail \
+	&& curl -fSL https://ftp.gnu.org/gnu/guix/$(ARTIFACT) \
+	| xzcat >$@
+
+clean:
+	-rm -f $(DESTDIR)/guix.iso
+	-rm -f $(TARGET)
+
+# vim:ts=4:sw=4:noet:syn=make:
