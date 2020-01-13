@@ -1,0 +1,4 @@
+*.swp
+*.swo
+/downloads/*.xz
+/downloads/*.iso
